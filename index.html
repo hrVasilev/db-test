@@ -162,8 +162,9 @@
 
         let resultText = `${name} (№${number}) - резултат: ${score}/4`;
 
-        fetch("https://script.google.com/macros/s/AKfycbwi39k6qniGBhv69IFYLmEIqyMio7-kyxvakoUMTTrY1yzc9s54FWZi_k9hkzJm4fzY/exec", {
+     fetch("https://script.google.com/macros/s/AKfycbwi39k6qniGBhv69IFYLmEIqyMio7-kyxvakoUMTTrY1yzc9s54FWZi_k9hkzJm4fzY/exec", {
     method: "POST",
+    mode: "no-cors",
     headers: {
         "Content-Type": "application/json"
     },
@@ -172,13 +173,6 @@
         number: number,
         score: score
     })
-})
-.then(response => response.json())
-.then(data => {
-    console.log("Изпратено успешно!");
-})
-.catch(error => {
-    console.error("Грешка:", error);
 });
 
         document.getElementById("result").textContent = resultText;
