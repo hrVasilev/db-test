@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест: Бази данни</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .question {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background: #007BFF;
+            color: white;
+            border-radius: 6px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #warning {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Тест: Бази данни</h2>
+    <p id="warning">Напускания: 0 / 3</p>
+
+    <form id="quizForm" onsubmit="submitQuiz(event)">
+
+        <div class="question">
+            <label for="studentName">Име и фамилия:</label>
+            <input type="text" id="studentName" placeholder="Въведи две имена" required>
+        </div>
+
+        <div class="question">
+            <label for="studentNumber">Номер в клас:</label>
+            <input type="number" id="studentNumber" placeholder="Напр. 12" required min="1">
+        </div>
+
+        <div class="question">
+            <p><b>1. Какво е база данни?</b></p>
+            <label><input type="radio" name="q1" value="a"> Програмен език</label>
+            <label><input type="radio" name="q1" value="b"> Система за съхранение на данни</label>
+            <label><input type="radio" name="q1" value="c"> Операционна система</label>
+            <label><input type="radio" name="q1" value="d"> Уеб сайт</label>
+        </div>
+
+        <div class="question">
+            <p><b>2. Какво означава SQL?</b></p>
+            <label><input type="radio" name="q2" value="a"> Simple Query Language</label>
+            <label><input type="radio" name="q2" value="b"> Structured Query Language</label>
+            <label><input type="radio" name="q2" value="c"> System Query Logic</label>
+            <label><input type="radio" name="q2" value="d"> Server Question Language</label>
+        </div>
+
+        <div class="question">
+            <p><b>3. Коя команда се използва за извличане на данни?</b></p>
+            <label><input type="radio" name="q3" value="a"> INSERT</label>
+            <label><input type="radio" name="q3" value="b"> DELETE</label>
+            <label><input type="radio" name="q3" value="c"> SELECT</label>
+            <label><input type="radio" name="q3" value="d"> UPDATE</label>
+        </div>
+
+        <div class="question">
+            <p><b>4. Какво е първичен ключ (Primary Key)?</b></p>
+            <label><input type="radio" name="q4" value="a"> Поле с повтарящи се стойности</label>
+            <label><input type="radio" name="q4" value="b"> Поле за пароли</label>
+            <label><input type="radio" name="q4" value="c"> Уникален идентификатор</label>
+            <label><input type="radio" name="q4" value="d"> Вид таблица</label>
+        </div>
+
+        <button type="submit">Предай теста</button>
+    </form>
+
+    <h3 id="result"></h3>
+</div>
+
+<script>
+    let violations = 0;
+    const maxViolations = 3;
+
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+            violations++;
+            document.getElementById("warning").textContent =
+                "Напускания: " + violations + " / " + maxViolations;
+
+            if (violations >= maxViolations) {
+                alert("Тестът приключи поради напускане на прозореца!");
+                submitQuiz();
+            }
+        }
+    });
+
+    function submitQuiz(event) {
+        if (event) event.preventDefault();
+
+        let score = 0;
+
+        const name = document.getElementById("studentName").value.trim();
+        const number = document.getElementById("studentNumber").value.trim();
+
+        const answers = {
+            q1: "b",
+            q2: "b",
+            q3: "c",
+            q4: "c"
+        };
+
+        for (let q in answers) {
+            let selected = document.querySelector(`input[name="${q}"]:checked`);
+            if (selected && selected.value === answers[q]) {
+                score++;
+            }
+        }
+
+        let resultText = `${name} (№${number}) - резултат: ${score}/4`;
+
+        fetch("https://script.google.com/macros/s/AKfycbwi39k6qniGBhv69IFYLmEIqyMio7-kyxvakoUMTTrY1yzc9s54FWZi_k9hkzJm4fzY/exec", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        name: name,
+        number: number,
+        score: score
+    })
+})
+.then(response => response.json())
+.then(data => {
+    console.log("Изпратено успешно!");
+})
+.catch(error => {
+    console.error("Грешка:", error);
+});
+
+        document.getElementById("result").textContent = resultText;
+
+        document.querySelectorAll("input").forEach(el => el.disabled = true);
+    }
+</script>
+
+</body>
+</html>
